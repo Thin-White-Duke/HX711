@@ -95,33 +95,43 @@ long HX711::read_average(byte times) {
 	return sum / times;
 }
 
-double HX711::get_value(byte times) {
-	return read_average(times) - OFFSET;
+void HX711::set_scale(float scale_m, float scale_b) {
+	SCALE_M = scale_m;
+	SCALE_B = scale_b;
 }
 
-float HX711::get_units(byte times) {
-	return get_value(times) / SCALE;
-}
-
-void HX711::tare(byte times) {
+void HX711::set_tare(byte times) {
 	double sum = read_average(times);
 	set_offset(sum);
 }
 
-void HX711::set_scale(float scale) {
-	SCALE = scale;
+void HX711::set_offset(double offset) {
+	OFFSET_RAW = offset;
+	OFFSET = SCALE_M * OFFSET_RAW + SCALE_B;
 }
 
-float HX711::get_scale() {
-	return SCALE;
+long HX711::get_offset_raw() {
+	return OFFSET_RAW;
 }
 
-void HX711::set_offset(long offset) {
-	OFFSET = offset;
+float HX711::get_offset() {
+  return OFFSET;
 }
 
-long HX711::get_offset() {
-	return OFFSET;
+float HX711::get_weight(byte times) {
+	return SCALE_M * read_average(times) + SCALE_B;
+}
+
+float HX711::get_tare(byte times) {
+  return get_weight(times) - OFFSET;
+}
+
+float HX711::get_scale_m() {
+	return SCALE_M;
+}
+
+float HX711::get_scale_b() {
+  return SCALE_B;
 }
 
 void HX711::power_down() {

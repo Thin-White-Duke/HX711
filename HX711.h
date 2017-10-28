@@ -13,8 +13,12 @@ class HX711
 		byte PD_SCK;	// Power Down and Serial Clock Input Pin
 		byte DOUT;		// Serial Data Output Pin
 		byte GAIN;		// amplification factor
-		long OFFSET = 0;	// used for tare weight
-		float SCALE = 1;	// used to return weight in grams, kg, ounces, whatever
+		//long  OFFSET = 0;	  // obsolete: used for tare weight
+		long  OFFSET_RAW = 0;
+		float OFFSET = 0.f;
+		float SCALE = 1.f;	  // obsolete, was used to return weight in grams, kg, ounces, whatever
+		float SCALE_M = 1.f;  // default gradient of the calibration function
+		float SCALE_B = 0.f;  // ordinate of the calibration function
 
 	public:
 		// define clock and data pin, channel, and gain factor
@@ -45,27 +49,35 @@ class HX711
 		// returns an average reading; times = how many times to read
 		long read_average(byte times = 10);
 
-		// returns (read_average() - OFFSET), that is the current value without the tare weight; times = how many readings to do
-		double get_value(byte times = 1);
+    // set the SCALE values used to convert the raw data to "human readable" data (measure units)
+		void set_scale(float scale_m = 1.f, float scale_b = 0.f);
 
-		// returns get_value() divided by SCALE, that is the raw value divided by a value obtained via calibration
-		// times = how many readings to do
-		float get_units(byte times = 1);
+		// set tare by averaging the initial weight over times values
+		void set_tare(byte times = 10);
 
-		// set the OFFSET value for tare weight; times = how many times to read the tare value
-		void tare(byte times = 10);
+		// // set tare OFFSETs
+		void set_offset(double offset);
 
-		// set the SCALE value; this value is used to convert the raw data to "human readable" data (measure units)
-		void set_scale(float scale = 1.f);
+		// get the tare weight; times = how many times to read the tare value for averaging
+		float get_tare(byte times = 10);
 
-		// get the current SCALE
+    // get the brutto weight; times = how many times to read the tare value for averaging
+    float get_weight(byte times = 10);
+
+    // get the current SCALE_M
+    float get_scale_m();
+
+    // get the current SCALE_B
+    float get_scale_b();
+
+		// obsolete: get the current SCALE
 		float get_scale();
 
-		// set OFFSET, the value that's subtracted from the actual reading (tare weight)
-		void set_offset(long offset = 0);
+		// get the current OFFSET in real weight
+		float get_offset();
 
-		// get the current OFFSET
-		long get_offset();
+		// get the current RAW OFFSET
+		long get_offset_raw();
 
 		// puts the chip into power down mode
 		void power_down();
