@@ -16,7 +16,6 @@ class HX711
 		//long  OFFSET = 0;	  // obsolete: used for tare weight
 		long  OFFSET_RAW = 0;
 		float OFFSET = 0.f;
-		float SCALE = 1.f;	  // obsolete, was used to return weight in grams, kg, ounces, whatever
 		float SCALE_M = 1.f;  // default gradient of the calibration function
 		float SCALE_B = 0.f;  // ordinate of the calibration function
 
